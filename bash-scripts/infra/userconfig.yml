@@ -1,0 +1,30 @@
+#cloud-config
+
+users:
+  - name: root
+    shell: "/bin/bash"
+    ssh_authorized_keys:
+      - ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBADCNfpMJuFw7BJ97wuWwY8TJA5fbjcdF/e6jS3hVoYiRLbfJlyH12ajsJko+boflE8ruUSAPnkqfPUnumhQQzz65ABaXG0NQ87xZI8yrwwMwt8PYdlGSW9+YFnsjrHtv6phMbZWGUE+Gdx9FhvHneOSvBbO2mdYYphM+4lUSoCpBsgCWw==
+
+  - name: tebeco
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: "/bin/bash"
+    ssh_authorized_keys:
+      - ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBADCNfpMJuFw7BJ97wuWwY8TJA5fbjcdF/e6jS3hVoYiRLbfJlyH12ajsJko+boflE8ruUSAPnkqfPUnumhQQzz65ABaXG0NQ87xZI8yrwwMwt8PYdlGSW9+YFnsjrHtv6phMbZWGUE+Gdx9FhvHneOSvBbO2mdYYphM+4lUSoCpBsgCWw==
+
+runcmd:
+  - systemctl start qemu-guest-agent
+
+package_update: true
+package_upgrade: true
+packages:
+  - qemu-guest-agent
+
+apt:
+  conf: | # APT config
+    APT {
+      Get {
+        Assume-Yes "true";
+        Fix-Broken "true";
+      };
+    };
