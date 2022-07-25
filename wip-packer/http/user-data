@@ -1,0 +1,31 @@
+#cloud-config
+autoinstall:
+  version: 1
+  locale: en_US
+  ssh:
+    install-server: true
+    allow-pw: true
+    disable_root: true
+    ssh_quiet_keygen: true
+    allow_public_ssh_keys: true
+  packages:
+    - qemu-guest-agent
+    - sudo
+  storage:
+    layout:
+      name: direct
+    swap:
+      size: 0
+  user-data:
+    package_upgrade: false
+    timezone: Indian/Reunion
+    users:
+      - name: tebeco
+        groups: [adm, sudo]
+        lock-passwd: false
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        shell: /bin/bash
+        # passwd: your-password
+        # - or -
+        ssh_authorized_keys:
+          - ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBADCNfpMJuFw7BJ97wuWwY8TJA5fbjcdF/e6jS3hVoYiRLbfJlyH12ajsJko+boflE8ruUSAPnkqfPUnumhQQzz65ABaXG0NQ87xZI8yrwwMwt8PYdlGSW9+YFnsjrHtv6phMbZWGUE+Gdx9FhvHneOSvBbO2mdYYphM+4lUSoCpBsgCWw==

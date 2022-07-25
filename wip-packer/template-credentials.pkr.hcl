@@ -1,0 +1,5 @@
+proxmox_api_url          = "https://proxmox.tebeclone.com/api2/json"
+proxmox_api_username     = "packer@pve"
+proxmox_api_password     = "CHANGE_ME"
+proxmox_api_token_id     = "user@pam!user-token"
+proxmox_api_token_secret = "xxxxx"

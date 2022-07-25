@@ -1,0 +1,156 @@
+# https://kubernetes.io/blog/2019/03/15/kubernetes-setup-using-ansible-and-vagrant/
+# https://github.com/virtualelephant/vsphere-kubernetes/blob/master/ansible/cilium-install.yml#L57
+# ansible .yml files define what tasks/operations to run
+---
+- hosts: all # run on the "all" hosts category from ansible-hosts.txt
+
+  # become means be superuser
+  become: true
+  remote_user: tebeco
+
+  vars_files:
+    - ansible-vars.yml
+
+  tasks:
+    - name: Install packages that allow apt to be used over HTTPS
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - libseccomp2
+
+    - name: Enable overlay and br_netfilter
+      command: sudo modprobe overlay && sudo modprobe br_netfilter
+
+    - name: Enable overlay and br_netfilter in containerd.conf
+      copy:
+        dest: "/etc/modules-load.d/containerd.conf"
+        content: |
+          overlay
+          br_netfilter
+
+    - name: configure forward and bridge on ipv4/6 in k8s-cri-containerd.conf
+      copy:
+        dest: "/etc/sysctl.d/k8s-cri-containerd.conf"
+        content: |
+          net.bridge.bridge-nf-call-iptables  = 1
+          net.ipv4.ip_forward                 = 1
+          net.bridge.bridge-nf-call-ip6tables = 1
+
+    - name: sysctl --system
+      command: sudo sysctl --system
+
+    - name: install containerd
+      shell: |
+        curl -LO https://github.com/containerd/containerd/releases/download/v{{containerd_version}}/containerd-{{containerd_version}}-linux-amd64.tar.gz
+        sudo tar Cxzvf /usr/local containerd-{{containerd_version}}-linux-amd64.tar.gz
+        curl -LO https://raw.githubusercontent.com/containerd/containerd/main/containerd.service
+        sudo cp containerd.service /lib/systemd/system/
+        sudo systemctl daemon-reload
+        sudo systemctl enable --now containerd
+        curl -LO https://github.com/opencontainers/runc/releases/download/v{{runc_version}}/runc.amd64
+        sudo install -m 755 runc.amd64 /usr/local/sbin/runc
+        curl -LO https://github.com/containernetworking/plugins/releases/download/v{{cni_version}}/cni-plugins-linux-amd64-v{{cni_version}}.tgz
+        sudo mkdir -p /opt/cni/bin
+        sudo tar Cxzvf /opt/cni/bin cni-plugins-linux-amd64-v{{cni_version}}.tgz
+        sudo mkdir -p /etc/containerd
+        sudo containerd config default | sudo tee /etc/containerd/config.toml
+        sudo sed -i 's/            SystemdCgroup = false/            SystemdCgroup = true/' /etc/containerd/config.toml
+        sudo systemctl restart containerd
+
+    - name: add kubernetes repo
+      shell: |
+        sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+    - name: Install Kubernetes binaries
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+          # it is usually recommended to specify which version you want to install
+          - kubelet={{kubernetes_version}}
+          - kubeadm={{kubernetes_version}}
+          - kubectl={{kubernetes_version}}
+
+    - name: hold kubernetes binary versions (prevent from being updated)
+      dpkg_selections:
+        name: "{{ item }}"
+        selection: hold
+      loop:
+        - kubelet
+        - kubeadm
+        - kubectl
+
+    - name: make sure containerd (re)start with proper conf/args
+      copy:
+        dest: "/etc/systemd/system/kubelet.service.d/0-containerd.conf"
+        content: |
+          [Service]
+          Environment="KUBELET_EXTRA_ARGS=--container-runtime=remote --runtime-request-timeout=15m --container-runtime-endpoint=unix:///run/containerd/containerd.sock"
+
+    - name: add kubernetes repo
+      command: sudo systemctl daemon-reload
+
+- hosts: kube_server
+  become: true
+  remote_user: tebeco
+
+  vars_files:
+    - ansible-vars.yml
+
+  tasks:
+    - name: Initialize Kubernetes cluster
+      command: "sudo kubeadm init --apiserver-advertise-address={{master_ip}} --apiserver-cert-extra-sans={{master_ip}} --pod-network-cidr={{pod_cidr}} --node-name={{ansible_hostname}}"
+      args:
+        creates: /etc/kubernetes/admin.conf # skip this task if the file already exists
+      register: kube_init
+
+    - name: show kube init info
+      debug:
+        var: kube_init
+
+    - name: Create .kube directory in user home
+      file:
+        path: "{{ home_dir }}/.kube"
+        state: directory
+        owner: 1000
+        group: 1000
+
+    - name: Configure .kube/config files in user home
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: "{{ home_dir }}/.kube/config"
+        remote_src: yes
+        owner: 1000
+        group: 1000
+
+    - name: restart kubelet for config changes
+      service:
+        name: kubelet
+        state: restarted
+
+    - name: get calico networking
+      get_url:
+        url: https://projectcalico.docs.tigera.io/manifests/calico.yaml
+        dest: "{{ home_dir }}/calico.yaml"
+
+    - name: apply calico networking
+      become: no
+      command: kubectl apply -f "{{ home_dir }}/calico.yaml"
+
+    - name: get dashboard
+      get_url:
+        url: https://raw.githubusercontent.com/kubernetes/dashboard/v{{kubernetes_dashboard_version}}/aio/deploy/recommended.yaml
+        dest: "{{ home_dir }}/dashboard.yaml"
+
+    - name: apply dashboard
+      become: no
+      command: kubectl apply -f "{{ home_dir }}/dashboard.yaml"

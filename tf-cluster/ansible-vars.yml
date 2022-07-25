@@ -1,0 +1,17 @@
+master_ip: "10.0.0.10"
+
+# specifying a CIDR for our cluster to use.
+# can be basically any private range except for ranges already in use.
+pod_cidr: "192.168.0.0/24"
+
+# this defines what the join command filename will be
+join_command_location: "join_command.out"
+
+# setting the home directory for retreiving, saving, and executing files
+home_dir: "/home/tebeco"
+
+containerd_version: "1.6.6"
+runc_version: "1.1.3"
+cni_version: "1.1.1"
+kubernetes_version: "1.24.0-00"
+kubernetes_dashboard_version: "2.6.0"
