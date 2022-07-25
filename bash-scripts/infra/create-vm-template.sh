@@ -29,7 +29,6 @@ IMGDISK="${ORIGINAL_IMGDISK%%.*}-modified.img"
 
 cp -f "$ORIGINAL_IMGDISK" "$IMGDISK"
 
-
 if [ -z ${TEMPLATE_NAME+x} ]
 then
   TEMPLATE_NAME=$ORIGINAL_FILENAME_NOEXT-template
