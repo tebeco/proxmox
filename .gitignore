@@ -1,0 +1,6 @@
+*.tar.gz
+
+terraform-plugin-proxmox.log
+.terraform/
+*.tfstate
+*.tfstate.backup
