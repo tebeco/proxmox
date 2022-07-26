@@ -25,12 +25,10 @@ TARGET_FOLDER="/home/tebeco/instal-cp"
 ################ Remote deploy of Workers Nodes
 SOURCE_FILES="./worker/files.txt"
 TARGET_USER="tebeco"
-TARGET_HOST=(192.168.104.20 192.168.104.21)
+TARGET_HOST_LIST=(192.168.104.20 192.168.104.21)
 TARGET_FOLDER="/home/tebeco/instal-worker"
 
-for WORKER_IP in "${TARGET_HOST[@]}";
+for TARGET_HOST in "${TARGET_HOST_LIST[@]}";
 do
-
-    ./common/remote-deploy.sh "$(readlink -f "$SOURCE_FILES")" "$TARGET_USER" "$WORKER_IP" "$TARGET_FOLDER"
-
+    ./common/remote-deploy.sh "$(readlink -f "$SOURCE_FILES")" "$TARGET_USER" "$TARGET_HOST" "$TARGET_FOLDER"
 done
