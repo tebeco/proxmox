@@ -12,6 +12,7 @@ chmod 400 ~/.ssh/kube-key-ecdsa
 ################ Create VM Cluster
 cd ./infra || exit
 ./deploy.sh
+cd - || exit
 
 ################ Remote deploy of Control Plane
 SOURCE_FILES="./controlplane/files.txt"
