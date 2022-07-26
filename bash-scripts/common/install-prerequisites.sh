@@ -5,7 +5,17 @@ RUNC_VERSION="1.1.3"
 CNI_VERSION="1.1.1"
 KUBERNETES_VERSION="1.24.0-00"
 
-echo $(hostname -I | awk '{print $2}') $(hostname) | sudo tee -a /etc/hosts2
+mapfile -d " " -t < <(hostname -I)
+for ip in "${MAPFILE[@]}";
+do
+  if [[ $ip == "10.0."* ]]; then
+    PRIVATE_IP=$ip
+    echo "using $PRIVATE_IP"
+    break;
+  fi
+done
+
+echo "$PRIVATE_IP" | sudo tee -a /etc/hosts2
 
 sudo apt-get update -y
 sudo apt-get install -y ca-certificates \
