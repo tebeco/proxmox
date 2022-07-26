@@ -13,7 +13,7 @@ function naively-accept-ssh-host()
     TARGET_HOST=$2
 
     ssh-keygen -f "$HOME/.ssh/known_hosts" -R "$TARGET_HOST"
-    ssh -o "StrictHostKeyChecking=no" "$TARGET_USER"@"$TARGET_HOST" 'ls'
+    ssh -o "StrictHostKeyChecking=no" -i ~/.ssh/kube-key-ecdsa "$TARGET_USER"@"$TARGET_HOST" 'ls'
 }
 
 naively-accept-ssh-host "$TARGET_USER" "$TARGET_HOST"
@@ -28,7 +28,7 @@ cd "$(dirname "${SOURCE_FILES}")" || exit
 tar -cvzf "/tmp/$ARCHIVE_NAME" -T "$SOURCE_FILES"
 cd - || exit
 
-scp "/tmp/$ARCHIVE_NAME" "$TARGET_USER"@"$TARGET_HOST":"/tmp"
-ssh "$TARGET_USER"@"$TARGET_HOST" "rm -rf $TARGET_FOLDER; mkdir -p $TARGET_FOLDER;tar -xvzf /tmp/$ARCHIVE_NAME --directory $TARGET_FOLDER"
+scp  -i ~/.ssh/kube-key-ecdsa "/tmp/$ARCHIVE_NAME" "$TARGET_USER"@"$TARGET_HOST":"/tmp"
+ssh -i ~/.ssh/kube-key-ecdsa "$TARGET_USER"@"$TARGET_HOST" "rm -rf $TARGET_FOLDER; mkdir -p $TARGET_FOLDER;tar -xvzf /tmp/$ARCHIVE_NAME --directory $TARGET_FOLDER"
 
-ssh "$TARGET_USER"@"$TARGET_HOST" "cd $TARGET_FOLDER && ./install.sh"
+ssh -i ~/.ssh/kube-key-ecdsa "$TARGET_USER"@"$TARGET_HOST" "cd $TARGET_FOLDER && ./install.sh"
