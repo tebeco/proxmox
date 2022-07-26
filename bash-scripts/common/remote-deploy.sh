@@ -7,7 +7,16 @@ TARGET_FOLDER=$3
 
 ARCHIVE_NAME=${TARGET_FOLDER##*/}.tar.gz
 
-ssh-keygen -f "$HOME/.ssh/known_hosts" -R "$TARGET_HOST"
+function naively-accept-ssh-host()
+{
+    TARGET_USER=$1
+    TARGET_HOST=$2
+
+    ssh-keygen -f "$HOME/.ssh/known_hosts" -R "$TARGET_HOST"
+    ssh -o "StrictHostKeyChecking=no" "$TARGET_USER"@"$TARGET_HOST" 'ls'
+}
+
+naively-accept-ssh-host "$TARGET_USER" "$TARGET_HOST"
 
 if [ ! -f "$SOURCE_FILES" ]; then
     echo "$SOURCE_FILES needs to be a file listing all files to archive";
