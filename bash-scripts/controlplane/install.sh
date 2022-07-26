@@ -1,4 +1,4 @@
 #!/bin/bash
 
 ./common/install-prerequisites.sh
-./install.sh
+./install-controlplane.sh
