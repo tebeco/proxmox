@@ -7,7 +7,7 @@ TARGET_FOLDER=$3
 
 ARCHIVE_NAME=${TARGET_FOLDER##*/}.tar.gz
 
-#foo ./folder user host ./
+ssh-keygen -f "$HOME/.ssh/known_hosts" -R "$TARGET_HOST"
 
 if [ ! -f "$SOURCE_FILES" ]; then
     echo "$SOURCE_FILES needs to be a file listing all files to archive";
