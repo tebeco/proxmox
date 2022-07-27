@@ -22,7 +22,7 @@ TARGET_FOLDER="/home/tebeco/instal-cp"
 
 ./common/remote-deploy.sh "$(readlink -f "$SOURCE_FILES")" "$TARGET_USER" "$TARGET_HOST" "$TARGET_FOLDER"
 scp -i "$HOME/.ssh/kube-key-ecdsa" "$TARGET_USER@$TARGET_HOST:\$HOME/.kube/config" "./config"
-scp -i "$HOME/.ssh/kube-key-ecdsa" "$TARGET_USER@$TARGET_HOST:$TARGET_FOLDER/join.sh" 
+scp -i "$HOME/.ssh/kube-key-ecdsa" "$TARGET_USER@$TARGET_HOST:$TARGET_FOLDER/join.sh" "./join.sh"
 
 ################ Remote deploy of Workers Nodes
 SOURCE_FILES="./worker/files.txt"
