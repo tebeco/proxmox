@@ -10,7 +10,6 @@ do
   fi
 done
 
-echo "Using MASTER_IP: $MASTER_IP"
 POD_CIDR="192.168.0.0/16"
 
 sudo kubeadm init --apiserver-advertise-address="$PRIVATE_IP" --apiserver-cert-extra-sans="$PRIVATE_IP" --pod-network-cidr=$POD_CIDR --node-name="$(hostname -s)"
