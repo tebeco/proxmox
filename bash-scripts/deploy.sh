@@ -30,8 +30,8 @@ TARGET_USER="tebeco"
 TARGET_HOST_LIST=(192.168.104.20 192.168.104.21)
 TARGET_FOLDER="/home/tebeco/install-worker"
 
-cp ./join.sh "$(dirname "$SOURCE_FILES")/join.sh"
-cp ./config "$(dirname "$SOURCE_FILES")/config"
+cp -f ./join.sh "$(dirname "$SOURCE_FILES")/join.sh"
+cp -f ./config "$(dirname "$SOURCE_FILES")/config"
 
 for TARGET_HOST in "${TARGET_HOST_LIST[@]}";
 do
