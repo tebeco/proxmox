@@ -69,3 +69,9 @@ Environment="KUBELET_EXTRA_ARGS=--container-runtime=remote --runtime-request-tim
 EOF
 
 sudo systemctl daemon-reload
+
+cat <<EOF >> "$HOME/.bashrc"
+alias k="kubectl"
+EOF
+
+source "$HOME/.bashrc"
