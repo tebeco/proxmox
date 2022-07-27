@@ -1,7 +1,5 @@
 #!/bin/bash
 
-./install-prerequisites.sh
-
 mkdir -p "$HOME/.kube"
 cp ./config "$HOME/.kube/config"
 
