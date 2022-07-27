@@ -18,7 +18,7 @@ cd - || exit
 SOURCE_FILES="./controlplane/files.txt"
 TARGET_USER="tebeco"
 TARGET_HOST="192.168.104.10"
-TARGET_FOLDER="/home/tebeco/instal-cp"
+TARGET_FOLDER="/home/tebeco/install-cp"
 
 ./common/remote-deploy.sh "$(readlink -f "$SOURCE_FILES")" "$TARGET_USER" "$TARGET_HOST" "$TARGET_FOLDER"
 scp -i "$HOME/.ssh/kube-key-ecdsa" "$TARGET_USER@$TARGET_HOST:\$HOME/.kube/config" "./config"
