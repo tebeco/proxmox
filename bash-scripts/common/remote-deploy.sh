@@ -3,7 +3,7 @@
 SOURCE_FILES=$1
 TARGET_USER=$2
 TARGET_HOST=$3
-TARGET_FOLDER=$3
+TARGET_FOLDER=$4
 
 ARCHIVE_NAME=${TARGET_FOLDER##*/}.tar.gz
 
@@ -28,7 +28,7 @@ cd "$(dirname "${SOURCE_FILES}")" || exit
 tar -cvzf "/tmp/$ARCHIVE_NAME" -T "$SOURCE_FILES"
 cd - || exit
 
-scp  -i ~/.ssh/kube-key-ecdsa "/tmp/$ARCHIVE_NAME" "$TARGET_USER"@"$TARGET_HOST":"/tmp"
-ssh -i ~/.ssh/kube-key-ecdsa "$TARGET_USER"@"$TARGET_HOST" "rm -rf $TARGET_FOLDER; mkdir -p $TARGET_FOLDER;tar -xvzf /tmp/$ARCHIVE_NAME --directory $TARGET_FOLDER"
+scp -i ~/.ssh/kube-key-ecdsa "/tmp/$ARCHIVE_NAME" "$TARGET_USER@$TARGET_HOST:/tmp"
+ssh -i ~/.ssh/kube-key-ecdsa "$TARGET_USER@$TARGET_HOST" "rm -rf $TARGET_FOLDER; mkdir -p $TARGET_FOLDER;tar -xvzf /tmp/$ARCHIVE_NAME --directory $TARGET_FOLDER"
 
-ssh -i ~/.ssh/kube-key-ecdsa "$TARGET_USER"@"$TARGET_HOST" "cd $TARGET_FOLDER && ./install.sh"
+ssh -i ~/.ssh/kube-key-ecdsa "$TARGET_USER@$TARGET_HOST" "cd $TARGET_FOLDER && ./install.sh"

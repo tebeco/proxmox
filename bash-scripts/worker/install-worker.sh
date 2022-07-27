@@ -2,4 +2,4 @@
 
 ./install-prerequisites.sh
 
-kubectl label node $(hostname -s) node-role.kubernetes.io/worker=worker-node
+kubectl label node "$(hostname -s)" node-role.kubernetes.io/worker=worker-node
