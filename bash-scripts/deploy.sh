@@ -28,10 +28,10 @@ scp -i "$HOME/.ssh/kube-key-ecdsa" "$TARGET_USER@$TARGET_HOST:$TARGET_FOLDER/joi
 SOURCE_FILES="./worker/files.txt"
 TARGET_USER="tebeco"
 TARGET_HOST_LIST=(192.168.104.20 192.168.104.21)
-TARGET_FOLDER="/home/tebeco/instal-worker"
+TARGET_FOLDER="/home/tebeco/install-worker"
 
-cp ./join.sh "$(readlink -f "$SOURCE_FILES")"
-cp ./config "$(readlink -f "$SOURCE_FILES")"
+cp ./join.sh "$(dirname "$SOURCE_FILES")/join.sh"
+cp ./config "$(dirname "$SOURCE_FILES")/config"
 
 for TARGET_HOST in "${TARGET_HOST_LIST[@]}";
 do
