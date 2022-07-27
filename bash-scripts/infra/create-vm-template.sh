@@ -19,7 +19,6 @@ function download-ubuntu-image () {
   fi
 }
 
-
 download-ubuntu-image "$IMG_PATH" "$DISTRO_NAME"
 
 ORIGINAL_IMGDISK="$IMG_PATH/$DISTRO_NAME-server-cloudimg-amd64.img"
