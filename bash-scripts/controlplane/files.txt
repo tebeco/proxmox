@@ -1,3 +1,4 @@
 ./install.sh
 ../common/install-prerequisites.sh
 ./install-controlplane.sh
+./dashboard.yml

@@ -19,7 +19,9 @@ sudo cp /etc/kubernetes/admin.conf "$HOME/.kube/config"
 sudo chown "$(id -u)":"$(id -g)" "$HOME/.kube/config"
 
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.6.0/aio/deploy/recommended.yaml
+kubectl apply -f ./dashboard.yml
 
 sudo kubeadm token create --print-join-command | tee ./join.sh
 chmod +x ./join.sh
