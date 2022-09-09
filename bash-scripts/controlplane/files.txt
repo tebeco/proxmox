@@ -2,3 +2,4 @@
 ../common/install-prerequisites.sh
 ./install-controlplane.sh
 ./dashboard.yml
+./metallb-l2.yml

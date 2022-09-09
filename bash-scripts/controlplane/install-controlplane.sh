@@ -20,6 +20,9 @@ sudo chown "$(id -u)":"$(id -g)" "$HOME/.kube/config"
 
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.5/config/manifests/metallb-native.yaml
+kubectl apply -f ./metallb-l2.yml
+
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.6.0/aio/deploy/recommended.yaml
 kubectl apply -f ./dashboard.yml
 
