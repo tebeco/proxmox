@@ -17,8 +17,9 @@ done
 
 echo "$PRIVATE_IP" | sudo tee -a /etc/hosts2
 
-sudo apt-get update -y
-sudo apt-get install -y ca-certificates \
+sudo apt-get -o DPkg::Lock::Timeout=-1 update -y
+sudo apt-get -o DPkg::Lock::Timeout=-1 upgrade -y
+sudo apt-get -o DPkg::Lock::Timeout=-1 install -y ca-certificates \
                         curl \
                         apt-transport-https \
                         libseccomp2
@@ -57,8 +58,8 @@ sudo systemctl restart containerd
 
 sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
 echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-sudo apt-get update
-sudo apt-get install -y kubelet=$KUBERNETES_VERSION \
+sudo apt-get -o DPkg::Lock::Timeout=-1 update
+sudo apt-get -o DPkg::Lock::Timeout=-1 install -y kubelet=$KUBERNETES_VERSION \
                         kubeadm=$KUBERNETES_VERSION \
                         kubectl=$KUBERNETES_VERSION
 sudo apt-mark hold kubelet=$KUBERNETES_VERSION kubeadm=$KUBERNETES_VERSION kubectl=$KUBERNETES_VERSION

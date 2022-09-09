@@ -8,9 +8,9 @@ sed -i 's/^\s*\(deb .*enterprise.proxmox.com.*\)/# \1/' /etc/apt/sources.list.d/
 ############################################################
 ############### update/upgrade + install git
 ############################################################
-apt-get update -y
-apt-get upgrade -y
-apt-get install -y \
+apt-get -o DPkg::Lock::Timeout=-1 update -y
+apt-get -o DPkg::Lock::Timeout=-1 upgrade -y
+apt-get -o DPkg::Lock::Timeout=-1 install -y \
     git \
     libguestfs-tools \
     nginx
